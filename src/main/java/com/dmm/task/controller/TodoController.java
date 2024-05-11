@@ -85,22 +85,30 @@ public class TodoController {
 
 	    week = new ArrayList<>();  // 次週のリストを新しくつくる
 	    
-	    // 2週目（「7」から始めているのは2週目だから）
-	    for(int i = 7; i <= day.lengthOfMonth(); i++) {
-	    	week.add(day);  // 週のリストへ格納
+	    // 2週目（2週目から月末まで）
+	    int leftOfMonth = day.lengthOfMonth() - day.getDayOfMonth();    // ①1週目の当月分
+	    leftOfMonth = day.lengthOfMonth() - leftOfMonth;    // ②当月の全日数から①を引く
+	    leftOfMonth = 7 - leftOfMonth;    // ③int i = 7を考慮した追加日数
 
-	    	w = day.getDayOfWeek();
-	    	if(w == DayOfWeek.SATURDAY) {  // 土曜日だったら
-	    		month.add(week);  // 当該週のリストを、月のリストへ格納する
-	    		week = new ArrayList<>();  // 次週のリストを新しくつくる
-	    	}
-
-	    	day = day.plusDays(1);  // 1日進める
+	    for(int i = 7; i < day.lengthOfMonth() + leftOfMonth; i++) {    // day.lengthOfMonth() に③を加える
+	        w = day.getDayOfWeek();
+	        week.add(day);
+	        if(w == DayOfWeek.SATURDAY){
+	            month.add(week);   // 月に週を追加
+	            week = new ArrayList<>();  // 新しい週のListを作成
+	        }
+	            
+	        day = day.plusDays(1);
+	        System.out.println(day);    // [DEBUG] ここで当月の末日が出力されること
 	    }
-	    
+		    
 	    // 最終週の翌月分
 	    w = day.getDayOfWeek();
-	    for(int i = 1; i < 7 - w.getValue(); i++) {  
+	    int remainDays = 7 - w.getValue();
+	    if(7 - w.getValue() == 0) {
+	    	remainDays = 7;
+	    }
+	    for(int i = 1; i < remainDays; i++) {  
 	    	week.add(day);
 	    	day = day.plusDays(1);
 	    }
